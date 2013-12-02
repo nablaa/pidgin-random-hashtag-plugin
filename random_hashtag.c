@@ -87,7 +87,7 @@ free_tags_list(char **tags) {
 static char **
 get_tag_list(const char *tags_filename, size_t *out_list_size) {
     char *filepath = get_tags_filepath(TAGS_FILENAME);
-    purple_debug_info(DEBUG_NAME, "Tags filepath: '%s'", filepath);
+    purple_debug_info(DEBUG_NAME, "Tags filepath: '%s'\n", filepath);
     FILE *fp = fopen(filepath, "r");
     free(filepath);
 
@@ -110,21 +110,21 @@ sending_im_msg_cb(PurpleAccount *account, const char *receiver,
 static gboolean
 plugin_load(PurplePlugin *plugin) {
     void *convs_handle;
-    purple_debug_info(DEBUG_NAME, "Loading plugin");
+    purple_debug_info(DEBUG_NAME, "Loading plugin\n");
     convs_handle = purple_conversations_get_handle();
 
     purple_signal_connect(convs_handle, "sending-im-msg", plugin,
                           PURPLE_CALLBACK(sending_im_msg_cb), NULL);
 
     tag_list = get_tag_list(TAGS_FILENAME, &tag_list_size);
-    purple_debug_info(DEBUG_NAME, "Read %lu tags from file", tag_list_size);
+    purple_debug_info(DEBUG_NAME, "Read %lu tags from file\n", tag_list_size);
 
     return TRUE;
 }
 
 static gboolean
 plugin_unload(PurplePlugin *plugin) {
-    purple_debug_info(DEBUG_NAME, "Unloading plugin");
+    purple_debug_info(DEBUG_NAME, "Unloading plugin\n");
     free_tags_list(tag_list);
     return TRUE;
 }
