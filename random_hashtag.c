@@ -100,11 +100,29 @@ get_tag_list(const char *tags_filename, size_t *out_list_size) {
     return tags;
 }
 
+static const char *
+get_random_hashtag(void) {
+    int index = rand() % tag_list_size;
+    return tag_list[index];
+}
+
+static char *
+add_random_hashtag_to_message(char *old_message) {
+    const char *hashtag = get_random_hashtag();
+    size_t hashtag_size = strlen(hashtag);
+    size_t old_size = strlen(old_message);
+    char *new_message = realloc(old_message, old_size + hashtag_size + 1);
+    return strncat(new_message, hashtag, hashtag_size + 1);
+}
+
 static void
 sending_im_msg_cb(PurpleAccount *account, const char *receiver,
                   char **message) {
-    purple_debug_info(DEBUG_NAME, "Sending im: %s; %s", receiver, *message);
-
+    char *msg = *message;
+    size_t length = strlen(msg);
+    if (msg[length - 1] == '#') {
+        *message = add_random_hashtag_to_message(msg);
+    }
 }
 
 static gboolean
