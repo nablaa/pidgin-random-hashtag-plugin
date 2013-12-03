@@ -120,7 +120,7 @@ sending_im_msg_cb(PurpleAccount *account, const char *receiver,
                   char **message) {
     char *msg = *message;
     size_t length = strlen(msg);
-    if (msg[length - 1] == '#') {
+    if (msg[length - 1] == '#' && tag_list != NULL) {
         *message = add_random_hashtag_to_message(msg);
     }
 }
