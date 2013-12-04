@@ -115,14 +115,17 @@ add_random_hashtag_to_message(char *old_message) {
     return strncat(new_message, hashtag, hashtag_size + 1);
 }
 
-static void
-sending_im_msg_cb(PurpleAccount *account, const char *receiver,
-                  char **message) {
+static gboolean
+writing_im_msg_cb(PurpleAccount *account, const char *who,
+                  char **message, PurpleConversation *conv,
+		  PurpleMessageFlags flags) {
     char *msg = *message;
     size_t length = strlen(msg);
     if (msg[length - 1] == '#' && tag_list != NULL) {
         *message = add_random_hashtag_to_message(msg);
     }
+
+    return FALSE;
 }
 
 static gboolean
@@ -131,8 +134,8 @@ plugin_load(PurplePlugin *plugin) {
     purple_debug_info(DEBUG_NAME, "Loading plugin\n");
     convs_handle = purple_conversations_get_handle();
 
-    purple_signal_connect(convs_handle, "sending-im-msg", plugin,
-                          PURPLE_CALLBACK(sending_im_msg_cb), NULL);
+    purple_signal_connect(convs_handle, "writing-im-msg", plugin,
+                          PURPLE_CALLBACK(writing_im_msg_cb), NULL);
 
     tag_list = get_tag_list(TAGS_FILENAME, &tag_list_size);
     purple_debug_info(DEBUG_NAME, "Read %lu tags from file\n", tag_list_size);
